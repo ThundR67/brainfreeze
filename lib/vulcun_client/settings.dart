@@ -3,10 +3,8 @@
 
 class Settings {
   //Main Settings
-  static final String vulcunHostName = "http://zerotechh6677.pythonanywhere.com";
 
-
-  //KEYWORDS
+    //KEYWORDS
   static final String usernameKeyword = "USERNAME";
   static final String passwordKeyword = "PASSWORDHASH";
   static final String emailKeyword = "EMAIL";
@@ -15,6 +13,7 @@ class Settings {
   static final String citydKeyword = "CITY";
   static final String stateKeyword = "STATE";
   static final String trackingKeyword = "TRACKING";
+  static final String vulcunHostName = "{LOCATION TO VULCUN SERVER";
   static final String questionKeyword = "QUESTION";
   static final String optionsKeyword = "OPTIONS";
   static final String optionSelectedKeyword = "OPTIONSELECTED";
