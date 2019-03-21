@@ -17,8 +17,13 @@ class LoginPageState extends State<LoginPage> {
   String _username;
   String _password;
   double _opacity = 0;
+  double _progressOpacity = 0;
 
   void _validateInputs() async {
+    setState(() {
+      //Showing progress bar
+     _progressOpacity = 1; 
+    });
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
@@ -38,6 +43,10 @@ class LoginPageState extends State<LoginPage> {
         });
       }
     }
+    setState(() {
+      //Hiding progress bar
+     _progressOpacity = 0; 
+    });
   }
 
   String _validateUsername(String value) {
@@ -102,6 +111,8 @@ class LoginPageState extends State<LoginPage> {
           margin: EdgeInsets.all(16),
           child: Column(
             children: <Widget>[
+              Opacity(child: LinearProgressIndicator(), opacity: _progressOpacity),
+              Container(height: 8),
               getBasicHeading(StringsSettings.signInPage),
               formUI(),
             ],

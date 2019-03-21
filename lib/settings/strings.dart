@@ -1,12 +1,17 @@
 //All String Data For BrainFreeze
+import 'package:flutter/material.dart';
 
 class StringsSettings {
 
 
   static final String appName = "BrainFreeze";
+  static final Widget noInternet = Text("Connect To Internet");
 
 
   static final String mathSubject = "math";
+
+  //Navigation
+  static final String signOut = "Sign Out";
 
   //Routes
   static final String navigateRoute = "/navigate";
@@ -46,6 +51,7 @@ class StringsSettings {
   static final String errorInvalidPassword = "Invalid Password";
   static final String invalidUsernameOrPassword =
       "Invalid Username Or Password";
+  static final String signingIn = "Signing In";
 
 
   //Math page

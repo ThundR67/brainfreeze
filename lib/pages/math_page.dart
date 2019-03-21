@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:brainfreeze/vulcun_client/vulcun_client.dart';
 import 'package:brainfreeze/vulcun_client/settings.dart' as vulcunSettings;
 import 'package:brainfreeze/settings/strings.dart';
+import 'package:brainfreeze/cache_manager.dart';
 import 'views/statistic_view.dart';
 import 'test_page.dart';
 
@@ -20,6 +21,7 @@ class MathPage extends StatefulWidget {
 
 class MathPageState extends State<MathPage> {
   Map<String, dynamic> _stats;
+  bool _error = false;
   bool _isLoading = true;
 
   void _giveTest() async {
@@ -32,33 +34,32 @@ class MathPageState extends State<MathPage> {
         context, MaterialPageRoute(builder: (context) => TestPage(mcqs, null)));
   }
 
-  void _loadStatisticsData() async {
+  Future<void> loadStatisticsData() async {
+    //Loads Sata
     VulcunClient vulcunClient = VulcunClient(null, null);
     await vulcunClient.retreiveData();
-    Map response =
-        await vulcunClient.requestForViewUserData(vulcunClient.currentUsername);
-
+    Map<String, dynamic> data = await cacheManaged(StringsSettings.mathPage,
+        vulcunClient.requestForViewUserData, vulcunClient.currentUsername);
+    if (data == null) _error = true;
+    Map tracking = json.decode(data[vulcunSettings.Settings.trackingKeyword]
+        .toString()
+        .replaceAll("'", '"'));
     setState(() {
-      print(response);
-      this._stats = json.decode(
-              response[vulcunSettings.Settings.trackingKeyword]
-                  .toString()
-                  .replaceAll("'", '"'))[
+      _isLoading = false;
+      this._stats = tracking[
           "${StringsSettings.mathSubject}_${StringsSettings.statsKeyword}"];
-      if(_stats == null){
-        _stats = {"MOCK" : "MOCK"};
-      }
     });
-
   }
 
   List<Widget> _buildStatistics() {
+    /*Loops over each topic in stats
+    Adss the accuracy and other data in list as a text widget*/
     List<Widget> statViews = [];
-
-    if(_stats["MOCK"] == "MOCK"){
+    if (_stats == null && !_error) {
       return [Text("No Data. Give Some MCQS")];
+    } else if (_error) {
+      return [StringsSettings.noInternet];
     }
-
     _stats.forEach((subject, value) {
       if (!subject.contains("_${StringsSettings.rightKeyword}")) {
         statViews.add(getStatisticWidget(
@@ -68,25 +69,34 @@ class MathPageState extends State<MathPage> {
         ));
       }
     });
-
     return statViews;
   }
 
   @override
+  void initState() {
+    super.initState();
+    loadStatisticsData();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (_stats == null) {
-      _loadStatisticsData();
-      print(_stats);
-    }
     return Scaffold(
       body: Center(
         child: Container(
           margin: EdgeInsets.all(8.0),
           child: Stack(
             children: <Widget>[
-              _stats==null
+              _isLoading
                   ? CircularProgressIndicator()
-                  : Column(children: this._buildStatistics()),
+                  : Column(children: [
+                      Expanded(
+                          child: RefreshIndicator(
+                        onRefresh: loadStatisticsData,
+                        child: ListView(
+                          children: _buildStatistics(),
+                        ),
+                      ))
+                    ]),
             ],
           ),
         ),

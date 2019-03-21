@@ -3,7 +3,7 @@
 
 class Settings {
   //Main Settings
-  static final String vulcunHostName = "http://192.168.42.154:6644";
+  static final String vulcunHostName = "http://zerotechh6677.pythonanywhere.com";
 
 
   //KEYWORDS

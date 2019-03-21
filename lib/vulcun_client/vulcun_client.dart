@@ -27,6 +27,7 @@ class VulcunClient {
 
   Future<bool> checkAccessTokenExpired(String responseGiven) async {
     //Checks if accces token was expired
+    print(responseGiven);
     Map output = json.decode(responseGiven);
     if (output[Settings.outputMsgKeyword] == Settings.outputTokenExpired) {
       String url = Settings.vulcunHostName + Settings.refreshTokenURL;
@@ -67,6 +68,10 @@ class VulcunClient {
 
   Future<bool> signOut() async {
     //Revokes access and refresh token
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.remove(Settings.outputAccessToken);
+    prefs.remove(Settings.outputRefreshToken);
+    prefs.remove(Settings.usernameKeyword);
     Map<String, String> accessTokenheaders = {
       Settings.authorizationKeyword:
           Settings.bearerKeyword + " " + this.accessToken
@@ -79,6 +84,7 @@ class VulcunClient {
         headers: accessTokenheaders);
     http.delete(Settings.vulcunHostName + Settings.revokeRefreshToken,
         headers: refreshTokenheaders);
+
     return true;
   }
 
@@ -89,6 +95,7 @@ class VulcunClient {
     url += "${Settings.usernameKeyword}=$username&";
     url += "${Settings.passwordKeyword}=$password";
     var response = await http.post(url);
+    print(response.body);
     Map output = json.decode(response.body);
     if (output[Settings.outputMsgKeyword] == Settings.outputWentWrong) {
       return false;

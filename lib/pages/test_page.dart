@@ -3,12 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:brainfreeze/vulcun_client/settings.dart' as vulcunSettings;
 import 'submit_page.dart';
 
+
+/* Takes in mcqs remaining
+Shows the first mcq
+Then add the option selected to mcqdone
+Then removes the mcq from mcqremaining as mcq is answered
+sends user to a new test page with new mcq remaining and new mqs done data*/
+
 class TestPage extends StatefulWidget {
   final Map _mcqsRemaining;
   final Map _mcqsDone;
-
   TestPage(this._mcqsRemaining, this._mcqsDone);
-
   @override
   State<StatefulWidget> createState() {
     return TestPageState(_mcqsRemaining, _mcqsDone);
@@ -16,14 +21,14 @@ class TestPage extends StatefulWidget {
 }
 
 class TestPageState extends State<TestPage> {
+  List _currentOptions;
+  String _currentQuestion;
   int _radioValue = 1;
   int _currentId;
   Map _mcqsRemaining;
   Map<String, Map<String,String>> _mcqsDone;
   Map _futureMcqsRemaining = {};
 
-  List _currentOptions;
-  String _currentQuestion;
 
   TestPageState(this._mcqsRemaining, this._mcqsDone);
 
@@ -34,8 +39,10 @@ class TestPageState extends State<TestPage> {
   }
 
   void _loadData() {
+    /*loads data
+    shows first mcq
+    keeps rest of mcq in new mcqs remaining */
     bool firstItemCame = false;
-    print(_mcqsRemaining);
     _mcqsRemaining.forEach((key, value) {
       if (!firstItemCame) {
         _currentId = int.parse(key);
@@ -76,6 +83,8 @@ class TestPageState extends State<TestPage> {
   }
 
   void _submit() {
+    /*Adds option selected and mcq data to new mcq done and redirects user
+    to new test page with new mcq remaining and new mcq done */
     if(_mcqsDone == null){
       _mcqsDone = {};
     }
@@ -94,10 +103,13 @@ class TestPageState extends State<TestPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (null == null) {
-      _loadData();
-    }
     return Scaffold(
       body: SafeArea(
         child: Container(

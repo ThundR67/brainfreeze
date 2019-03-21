@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:brainfreeze/settings/strings.dart';
+import 'package:brainfreeze/vulcun_client/vulcun_client.dart';
 import 'math_page.dart';
 import 'leaderboard_page.dart';
+
 
 class NavigationDrawer extends StatefulWidget {
   @override
@@ -14,6 +16,14 @@ class NavigationDrawerState extends State<NavigationDrawer> {
   int _selectedIndex = 0;
   List<String> _pageTitles = [StringsSettings.mathPage, StringsSettings.leaderboardPage];
 
+  void _signOut() async {
+    print("signing Out");
+    VulcunClient vulcunClient = VulcunClient(null, null);
+    await vulcunClient.retreiveData();
+    await vulcunClient.signOut();
+    Navigator.of(context).pushReplacementNamed(StringsSettings.loginRoute);
+  }
+
   Widget _getDrawerItemSelected(int position){
     Widget page;
      switch (position) {
@@ -23,7 +33,8 @@ class NavigationDrawerState extends State<NavigationDrawer> {
        case 1:
          page = LeaderboardPage();
          break;
-       default:
+       case 2:
+        _signOut();
      }
      return page;
   }
@@ -53,6 +64,10 @@ class NavigationDrawerState extends State<NavigationDrawer> {
                  this._selectedIndex = 1; 
                 });
               },
+            ),
+            RaisedButton(
+              child: Text(StringsSettings.signOut),
+              onPressed: _signOut,
             )
           ],
         ),
